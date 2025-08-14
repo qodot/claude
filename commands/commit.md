@@ -6,6 +6,15 @@ argument-hint: [<메시지>]
 
 # Claude Command: commit
 
+## ⚠️ 중요 지시사항
+**절대로 다음 서명을 커밋 메시지에 포함하지 마세요:**
+- 🤖 Generated with Claude Code
+- https://claude.ai/code
+- Co-Authored-By: Claude <noreply@anthropic.com>
+- 기타 Claude 관련 서명이나 태그
+
+커밋 메시지는 사용자가 작성한 것처럼 깔끔하고 서명 없이 작성되어야 합니다.
+
 ## 사용법
 ```
 /commit [<메시지>]
@@ -73,6 +82,7 @@ git status --porcelain
    - 제목: 50자 이내로 변경사항 요약
    - 본문: 필요시 상세 설명 추가
    - 변경된 파일 수와 유형 명시
+   - **중요**: Claude Code 서명이나 Co-authored-by 태그를 절대 추가하지 않음
 
 ### 5단계: 커밋 실행
 ```bash
@@ -181,4 +191,4 @@ git log --oneline -1
 프로젝트의 커밋 규칙(있는 경우)을 자동으로 감지하고 준수:
 - Conventional Commits 형식
 - 이슈 번호 자동 추가
-- Co-authored-by 태그 지원
+- **Claude Code 서명 제외**: 절대로 "🤖 Generated with Claude Code"나 "Co-authored-by: Claude" 등의 서명을 추가하지 않음
