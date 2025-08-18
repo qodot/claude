@@ -82,6 +82,8 @@ git push -u origin <현재-브랜치>
 ## 스크린샷
 (UI 변경이 있는 경우)
 
+**중요**: Claude Code 서명을 추가하지 마세요. PR 본문에 "🤖 Generated with [Claude Code]" 또는 "Co-Authored-By: Claude" 등의 서명을 포함시키지 않습니다.
+
 ### 6단계: PR 생성
 ```bash
 gh pr create \
@@ -94,10 +96,19 @@ EOF
   --draft  # 기본값: draft PR로 생성 (--no-draft 옵션이 없는 경우)
 ```
 
-### 7단계: 결과 확인
+### 7단계: 결과 확인 및 브라우저 열기
 - 생성된 PR URL 제공
 - PR 번호와 제목 표시
 - 리뷰 요청 상태 확인
+- 자동으로 브라우저에서 PR 페이지 열기
+
+```bash
+# PR URL을 변수에 저장
+PR_URL=$(gh pr view --json url -q .url)
+
+# 브라우저에서 PR 열기
+open "$PR_URL"
+```
 
 ## 출력 형식
 
@@ -107,6 +118,8 @@ EOF
 
 PR #1234: [SPR-3040] 사용자 인증 시스템 개선
 URL: https://github.com/indentcorp/backend/pull/1234
+
+🌐 브라우저에서 PR 페이지를 열고 있습니다...
 
 다음 단계:
 - 리뷰어 할당하기
