@@ -1,5 +1,9 @@
 {
   "env": {},
   "hooks": {},
-  "model": "opus"
+  "model": "opus",
+  "statusLine": {
+    "type": "command",
+    "command": "npx ccusage statusline"
+  }
 }
