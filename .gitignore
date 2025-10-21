@@ -4,3 +4,11 @@ projects
 shell-snapshots
 statsig
 todos
+
+# History and debugging files
+history.jsonl
+debug/
+file-history/
+
+# Local settings
+settings.local.json
