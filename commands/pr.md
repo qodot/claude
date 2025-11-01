@@ -23,13 +23,47 @@ argument-hint: [--no-draft] [--base=<브랜치>]
 
 ## 프로세스
 
-### 1단계: 현재 상태 파악
-병렬로 다음 정보를 수집합니다:
-- 현재 브랜치 이름 확인 및 형식 검증 ({username}/{branch-name} 형식)
-- git status로 스테이징되지 않은 변경사항 확인
-- git diff로 전체 변경 내용 파악
-- git log로 최근 커밋 히스토리 확인
-- 원격 브랜치와의 동기화 상태 확인
+### 1단계: 현재 상태 파악 및 plan.yml 확인
+
+**병렬로 다음 정보를 수집합니다:**
+
+1. **Git 정보 수집**
+   - 현재 브랜치 이름 확인 및 형식 검증
+   - git status로 스테이징되지 않은 변경사항 확인
+   - git diff로 전체 변경 내용 파악
+   - git log로 최근 커밋 히스토리 확인
+   - 원격 브랜치와의 동기화 상태 확인
+
+2. **plan.yml 확인 (선택적)**
+   ```bash
+   # 현재 브랜치 이름 추출
+   BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+   # plan.yml 경로 확인
+   PLAN_FILE=".claude/features/${BRANCH}/plan.yml"
+   ```
+
+   - `.claude/features/<브랜치명>/plan.yml` 파일 존재 여부 확인
+   - 있으면: plan.yml 읽기 및 파싱
+   - 없으면: 기존 방식대로 git log 분석 진행
+
+   **plan.yml이 있는 경우:**
+   ```
+   ✅ plan.yml 발견!
+
+   /feature 명령어로 생성된 계획을 활용하여 PR을 생성합니다.
+   - PR 제목: <plan.yml의 pr_info.title>
+   - 배경 정보: <plan.yml의 background>
+   - 변경 내용: <plan.yml의 changes>
+   - 테스트 계획: <plan.yml의 testing>
+   ```
+
+   **plan.yml이 없는 경우:**
+   ```
+   ℹ️  plan.yml을 찾을 수 없습니다.
+
+   커밋 히스토리를 분석하여 PR을 생성합니다.
+   ```
 
 ### 2단계: 브랜치 정보 분석
 - 브랜치 이름에서 SPR 티켓 번호 추출 (예: SPR-3040)
@@ -52,10 +86,68 @@ git push -u origin <현재-브랜치>
 - 이미 푸시된 경우 강제 푸시 필요 여부 확인
 
 ### 5단계: PR 내용 생성
-**PR 제목 형식**:
-[SPR-XXXX] 변경사항의 핵심 요약
 
-**PR 본문 구조**:
+**두 가지 방식 중 하나를 사용합니다:**
+
+#### A. plan.yml 기반 PR 생성 (plan.yml이 있는 경우)
+
+**PR 제목**:
+```
+<plan.yml의 pr_info.title>
+```
+- plan.yml에 저장된 제목을 그대로 사용
+- SPR 티켓 번호가 있으면 자동으로 추가
+
+**PR 본문 구조 (한글)**:
+```markdown
+## 요약
+
+<plan.yml의 pr_info.title>
+
+## 배경
+
+<plan.yml의 background.why>
+
+<관련 이슈가 있으면>
+관련 이슈: <plan.yml의 background.issue>
+
+## 변경 내용
+
+<plan.yml의 changes.what>
+
+<포함 사항이 있으면>
+### 포함된 내용
+- <plan.yml의 changes.includes 항목들>
+
+<제외 사항이 있으면>
+### 제외된 내용 (향후 작업)
+- <plan.yml의 changes.excludes 항목들>
+
+## 테스트
+
+<plan.yml의 testing.scenarios를 체크리스트로>
+- [x] <시나리오 1>
+- [x] <시나리오 2>
+
+<테스트 노트가 있으면>
+### 테스트 노트
+<plan.yml의 testing.notes>
+
+## Breaking Changes
+<plan.yml의 testing.breaking_changes에 따라>
+- breaking_changes: true이면 "있음 - <설명>"
+- breaking_changes: false이면 "없음"
+```
+
+#### B. git log 기반 PR 생성 (plan.yml이 없는 경우)
+
+**PR 제목 형식**:
+```
+[SPR-XXXX] 변경사항의 핵심 요약
+```
+
+**PR 본문 구조 (한글)**:
+```markdown
 ## 배경
 - 이 작업이 필요한 이유 (간단히)
 - 해결하려는 문제나 구현하려는 기능 (간단히)
@@ -74,8 +166,12 @@ git push -u origin <현재-브랜치>
 
 ## 리뷰 노트
 (이 섹션은 비워둠)
+```
 
-**중요**: Claude Code 서명을 추가하지 마세요. PR 본문에 "🤖 Generated with [Claude Code]" 또는 "Co-Authored-By: Claude" 등의 서명을 포함시키지 않습니다.
+**중요 규칙**:
+- **모든 PR 내용은 한글로 작성**
+- Claude Code 서명을 절대 추가하지 않음
+- "🤖 Generated with [Claude Code]" 또는 "Co-Authored-By: Claude" 등의 서명 포함하지 않음
 
 ### 6단계: PR 생성
 ```bash
@@ -89,25 +185,75 @@ EOF
   --draft  # 기본값: draft PR로 생성 (--no-draft 옵션이 없는 경우)
 ```
 
-### 7단계: 결과 확인 및 브라우저 열기
+### 7단계: 결과 확인 및 plan.yml 업데이트
+
+**PR 생성 확인:**
 - 생성된 PR URL 제공
 - PR 번호와 제목 표시
 - 리뷰 요청 상태 확인
-- 자동으로 브라우저에서 PR 페이지 열기
 
 ```bash
 # PR URL을 변수에 저장
 PR_URL=$(gh pr view --json url -q .url)
+```
 
-# 브라우저에서 PR 열기
+**plan.yml 업데이트 (plan.yml이 있었던 경우):**
+
+1. **PR URL 기록**
+   ```bash
+   # plan.yml이 존재하면 PR URL 추가
+   if [ -f ".claude/features/${BRANCH}/plan.yml" ]; then
+     # PR URL과 생성 시간 추가
+     yq eval '.pr_info.link = "'"$PR_URL"'"' -i ".claude/features/${BRANCH}/plan.yml"
+     yq eval '.pr_created_at = "'"$(date -u +"%Y-%m-%dT%H:%M:%SZ")"'"' -i ".claude/features/${BRANCH}/plan.yml"
+   fi
+   ```
+
+2. **업데이트된 plan.yml 예시:**
+   ```yaml
+   pr_info:
+     title: "Google과 GitHub OAuth2 인증 추가"
+     link: "https://github.com/user/repo/pull/42"  # ← 자동 추가됨
+
+   pr_created_at: 2025-01-01T15:30:00Z  # ← 자동 추가됨
+   ```
+
+3. **결과 출력:**
+   ```
+   ✅ plan.yml 업데이트 완료
+
+   PR 링크가 plan.yml에 기록되었습니다.
+   파일: .claude/features/<브랜치>/plan.yml
+   ```
+
+**브라우저에서 PR 열기:**
+```bash
 open "$PR_URL"
 ```
 
 ## 출력 형식
 
-**성공 시**:
+**성공 시 (plan.yml 기반):**
 ```
-PR이 성공적으로 생성되었습니다!
+✅ plan.yml 기반 PR 생성 완료!
+
+PR #1234: Google과 GitHub OAuth2 인증 추가
+URL: https://github.com/user/repo/pull/1234
+
+✅ plan.yml 업데이트 완료
+   PR 링크가 기록되었습니다: .claude/features/feature/user-auth/plan.yml
+
+브라우저에서 PR 페이지를 열고 있습니다...
+
+다음 단계:
+- 리뷰어 할당하기
+- CI/CD 파이프라인 확인하기
+- 코드 리뷰 피드백 기다리기
+```
+
+**성공 시 (git log 기반):**
+```
+✅ PR이 성공적으로 생성되었습니다!
 
 PR #1234: [SPR-3040] 사용자 인증 시스템 개선
 URL: https://github.com/indentcorp/backend/pull/1234
