@@ -315,8 +315,11 @@ testing:
 5. "문서 작성"
 6. "테스트 실행 및 검증"
 7. "코드 리뷰 준비"
+8. "PR 생성 (/pr 실행)"
 
 첫 번째 TODO를 완료로 표시하고, 두 번째를 in_progress로 설정합니다.
+
+**중요**: TODO 8번 "PR 생성"은 자동 구현 모드에서 모든 TODO 완료 후 자동으로 실행됩니다.
 
 ### 7단계: 테스트 구조 설정
 
@@ -478,6 +481,42 @@ TODO 7: 코드 리뷰 준비
    - 코드 스멜 제거
    - 디자인 패턴 적용
 
+5. **자체 검증 (전체 자동 구현 모드)**
+
+   **모든 TODO 완료 후 반드시 실행:**
+
+   ```bash
+   # 현재 브랜치 확인
+   CURRENT_BRANCH=$(git branch --show-current)
+
+   # PR 존재 여부 확인
+   PR_EXISTS=$(gh pr list --head "$CURRENT_BRANCH" --json number --jq '.[0].number')
+
+   if [ -z "$PR_EXISTS" ]; then
+     echo "⚠️  경고: PR이 생성되지 않았습니다!"
+     echo "TODO 8번 'PR 생성'을 완료하지 못했습니다."
+     echo ""
+     echo "지금 바로 /pr --draft를 실행합니다..."
+     # /pr 실행
+   fi
+   ```
+
+   **검증 실패 시 자동 복구:**
+   - PR이 없으면 즉시 `/pr --draft` 실행
+   - TODO 8번을 in_progress → completed로 업데이트
+   - plan.yml에 PR URL 기록 확인
+
+   **검증 성공 시:**
+   ```
+   ✅ 자체 검증 통과
+
+   - 커밋: <N>개 생성됨
+   - PR: https://github.com/user/repo/pull/<번호>
+   - plan.yml: PR 링크 기록됨
+
+   /feature 명령어가 성공적으로 완료되었습니다!
+   ```
+
 ## 출력 형식
 
 ### 프로젝트 확인 완료:
@@ -557,6 +596,8 @@ plan.yml 저장됨: .claude/features/<기능-이름>/plan.yml
 - [ ] 테스트 구조 설정됨
 - [ ] TODO 리스트 초기화됨
 - [ ] 커밋되지 않은 변경사항 없음
+- [ ] **PR 생성 완료됨 (전체 자동 구현 모드)** ← 새로 추가!
+- [ ] **plan.yml에 PR URL 기록됨 (전체 자동 구현 모드)** ← 새로 추가!
 
 **오류 처리:**
 
