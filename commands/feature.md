@@ -469,7 +469,8 @@ TODO 7: 코드 리뷰 준비
 2. **자동 커밋 워크플로우**
    - 파일을 생성/수정한 TODO 완료 시 자동으로 `/commit` 실행
    - `/commit` 명령어가 변경사항을 분석하여 적절한 커밋 메시지 자동 생성
-   - Conventional Commits 형식 자동 준수
+   - DB 마이그레이션은 "migrate: ", AI 지침/문서는 "docs: " prefix 자동 적용
+   - 그 외 모든 변경사항은 prefix 없이 작성 (feat:, fix:, chore: 등 절대 사용 금지)
    - 논리적 단위로 커밋이 자동 분리됨
 
 3. **테스트 우선**

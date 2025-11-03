@@ -169,11 +169,9 @@ git log --oneline -1
 
 ### 스마트 메시지 생성
 변경사항의 패턴을 분석하여 적절한 커밋 메시지 형식을 자동으로 선택:
-- **기능 추가**: "feat: 새로운 기능 설명"
-- **버그 수정**: "fix: 수정된 문제 설명"
-- **문서 업데이트**: "docs: 문서 변경 내용"
-- **리팩토링**: "refactor: 개선된 코드 구조"
-- **테스트 추가**: "test: 테스트 케이스 설명"
+- **마이그레이션**: "migrate: Django/Ecto 마이그레이션 설명"
+- **문서/지침**: "docs: AI 에이전트 지침 또는 문서 변경 내용"
+- **그 외**: "변경사항 설명" (prefix 없이)
 
 ### 변경사항 요약
 커밋 전 변경사항을 카테고리별로 정리하여 보여줍니다:
@@ -183,7 +181,9 @@ git log --oneline -1
 - 업데이트된 문서
 
 ### 커밋 규칙 준수
-프로젝트의 커밋 규칙(있는 경우)을 자동으로 감지하고 준수:
-- Conventional Commits 형식
-- 이슈 번호 자동 추가
+프로젝트의 커밋 규칙을 자동으로 감지하고 준수:
+- **DB 마이그레이션**(Django migrations, Ecto migrations 등): "migrate: " prefix 사용
+- **AI 에이전트 지침이나 문서 수정**: "docs: " prefix 사용
+- **그 외 모든 변경사항**: prefix 없이 작성 (feat:, fix:, chore: 등 절대 사용 금지)
+- 이슈 번호 자동 추가(프로젝트에 규칙이 있는 경우)
 - **Claude Code 서명 제외**: 절대로 "🤖 Generated with Claude Code"나 "Co-authored-by: Claude" 등의 서명을 추가하지 않음
