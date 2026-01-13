@@ -5,5 +5,32 @@
     "type": "command",
     "command": "input=$(cat); dir=$(echo \"$input\" | jq -r '.workspace.current_dir'); model=$(echo \"$input\" | jq -r '.model.display_name'); user=$(whoami); host=$(hostname -s); out=$(printf '\\033[2m\\033[32m%s@%s\\033[0m' \"$user\" \"$host\"); out=\"$out $(printf '\\033[2m\\033[36m%s\\033[0m' \"$(basename \"$dir\")\")\"​; if cd \"$dir\" 2>/dev/null && branch=$(git --no-optional-locks branch --show-current 2>/dev/null) && [ -n \"$branch\" ]; then out=\"$out $(printf '\\033[2m\\033[35mon %s\\033[0m' \"$branch\")\"​; status=$(git --no-optional-locks status --porcelain 2>/dev/null); [ -n \"$status\" ] && ind=\"\" && [ $(echo \"$status\" | grep -c '^ M' || echo 0) -gt 0 ] && ind=\"${ind}!\" && [ $(echo \"$status\" | grep -c '^??' || echo 0) -gt 0 ] && ind=\"${ind}?\" && [ $(echo \"$status\" | grep -c '^ D' || echo 0) -gt 0 ] && ind=\"${ind}✘\" && [ -n \"$ind\" ] && out=\"$out $(printf '\\033[2m\\033[31m[%s]\\033[0m' \"$ind\")\"; fi; out=\"$out $(printf '\\033[2m\\033[34mvia %s\\033[0m' \"$model\")\"; echo \"$out\""
   },
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true,
+    "context7@claude-plugins-official": true,
+    "github@claude-plugins-official": true,
+    "feature-dev@claude-plugins-official": true,
+    "code-review@claude-plugins-official": true,
+    "serena@claude-plugins-official": true,
+    "commit-commands@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "security-guidance@claude-plugins-official": true,
+    "playwright@claude-plugins-official": true,
+    "pr-review-toolkit@claude-plugins-official": true,
+    "figma@claude-plugins-official": true,
+    "pyright-lsp@claude-plugins-official": true,
+    "explanatory-output-style@claude-plugins-official": true,
+    "Notion@claude-plugins-official": true,
+    "hookify@claude-plugins-official": true,
+    "greptile@claude-plugins-official": true,
+    "learning-output-style@claude-plugins-official": true,
+    "vercel@claude-plugins-official": true,
+    "sentry@claude-plugins-official": true,
+    "slack@claude-plugins-official": true,
+    "rust-analyzer-lsp@claude-plugins-official": true,
+    "ralph-loop@claude-plugins-official": true,
+    "stripe@claude-plugins-official": true,
+    "code-simplifier@claude-plugins-official": true
+  },
   "alwaysThinkingEnabled": true
 }
