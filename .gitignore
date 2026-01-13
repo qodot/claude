@@ -13,3 +13,20 @@ file-history/
 # Local settings
 settings.local.json
 stats-cache.json
+
+# Credentials (sensitive)
+.credentials.json
+
+# Cache directories
+cache/
+downloads/
+
+# Command examples (large binaries)
+commands/examples/
+
+# Plugins runtime data
+plugins/cache/
+plugins/marketplaces/
+plugins/install-counts-cache.json
+plugins/installed_plugins.json
+plugins/known_marketplaces.json
